@@ -1,0 +1,7 @@
+
+cuadrado{
+punto(1 ; 2)
+punto(1 ; 2)
+punto(1 ; 2)
+punto(1 ; 2)
+}

@@ -1,0 +1,52 @@
+package AnalizadorLS; //nombre del paquete en el que se encuentra el analizador
+
+import java_cup.runtime.*;  //se importa la libreria habitual runtime de CUP
+
+parser code {:
+    static ALexico scanner=null;
+
+     public void syntax_error(Symbol cur_token){
+     System.err.println("Error fatal.");
+     report_error("Error de sintaxis:linea" + scanner.linea() +
+     ", columna " + scanner.columna(), null);
+    }
+      
+    public static void main(String[] args) {
+        ASintactico Parser = null;
+    try{
+        scanner =new ALexico(new java.io.FileReader("src\\AnalizadorLS\\programa.txt"));
+        Parser= new ASintactico(scanner);
+        Parser.parse();
+    
+    }catch (java.io.FileNotFoundException e){
+        System.out.println("File not found :  \"" + "programa.txt" + "\"");
+        
+    }catch(java.io.IOException e){
+    System.out.println("IO error scanning file \"" + "programa.txt" + "\"");
+    
+    System.out.println(e);
+    }catch (Exception e){
+     System.out.println("Unexpected exception:");
+        }
+      }
+:};
+
+terminal        IF, PARA, PARC, ELSE, ID, OPREL, NUMREAL;
+terminal        DATO;
+terminal        LLAVEA, LLAVEC, IGUAL, PUNYCO;
+non terminal    inicio, estructuraIF, parteIF, parteELSE;
+non terminal    condicion, sentencias, sentencia,estructuraIFELSE;
+
+start with inicio;
+
+inicio ::=       {:System.out.println("*VACIO*");  :}
+                    | estructuraIFELSE     
+                         {:System.out.println("*ANALISIS COMPLETO*"); :};
+
+estructuraIFELSE ::= estructuraIFELSE estructuraIF | estructuraIF;
+estructuraIF ::= parteIF  {:System.out.println("* cuadrado correcto *");:}
+                |   parteIF parteELSE  {:System.out.println("* IF ELSE COMPLETO *");  :};
+
+parteIF ::= ID LLAVEA sentencias | sentencias LLAVEC ;
+sentencias ::= ID PARA sentencia  PARC ;
+sentencia ::=   NUMREAL PUNYCO NUMREAL;
